@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios");
+const { askGPT } = require("../common/gptClient");
 require("dotenv").config();
 
 const app = express();
@@ -19,28 +20,14 @@ app.post("/slack/events", async (req, res) => {
     const slackChannel = event.channel;
 
     // OpenAI に問い合わせ
-    const gptRes = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-4",
-        messages: [{ role: "user", content: userMessage }],
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-      }
-    );
-
-    const reply = gptRes.data.choices[0].message.content;
+    const gptRes = await askGPT(userMessage);
 
     // Slack に返信
     await axios.post(
       "https://slack.com/api/chat.postMessage",
       {
         channel: slackChannel,
-        text: reply,
+        text: gptRes,
       },
       {
         headers: {
