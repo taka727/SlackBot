@@ -12,14 +12,15 @@
  */
 
 const axios = require("axios");
-const { askGPT } = require("./common/gptClient");
+const { askGPT, getSecretParam } = require("./common/gptClient");
+
 
 exports.lambdaHandler = async (event, context) => {
   try {
-    console.log("Slackイベント：",event);
+    console.log("Slackイベント：", event);
 
-    const body = typeof event.body === "string" ?  JSON.parse(event.body) : event.body;
-
+    const body = typeof event.body === "string" ? JSON.parse(event.body) : event.body;
+    const slackBotToken = await getSecretParam("/slack-gpt/slack_bot_token");
     // Slackの初期検証用
     if (body.type === "url_verification") {
       return {
@@ -46,7 +47,7 @@ exports.lambdaHandler = async (event, context) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`,
+            Authorization: `Bearer ${slackBotToken}`,
             "Content-Type": "application/json",
           },
         }

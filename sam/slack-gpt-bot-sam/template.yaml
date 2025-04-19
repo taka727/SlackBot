@@ -8,7 +8,7 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 10
     # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
     LoggingConfig:
       LogFormat: JSON
@@ -19,10 +19,6 @@ Resources:
       CodeUri: slackFunction/
       Handler: app.lambdaHandler
       Runtime: nodejs22.x
-      Environment:
-        Variables:
-          OPENAI_API_KEY: '{{resolve:ssm:/slack-gpt/openai_api_key:SecureString}}'
-          SLACK_BOT_TOKEN: '{{resolve:ssm:/slack-gpt/slack_bot_token:SecureString}}' 
       Architectures:
       - x86_64
       Events:
