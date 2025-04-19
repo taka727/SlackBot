@@ -7,7 +7,6 @@ app.use(express.json());
 
 app.post("/slack/events", async (req, res) => {
   const { type, challenge, event } = req.body;
-
   // Slackの初期検証用
   if (type === "url_verification") {
     res.setHeader("Content-Type", "application/json");
@@ -28,6 +27,7 @@ app.post("/slack/events", async (req, res) => {
       },
       {
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         },
       }
@@ -50,9 +50,8 @@ app.post("/slack/events", async (req, res) => {
       }
     );
 
-    return res.sendStatus(200);
+  return res.sendStatus(200);
   }
-
   res.sendStatus(200);
 });
 
