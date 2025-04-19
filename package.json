@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "sam:valid":"sam validate",
+    "sam:build":"sam build",
+    "sam:deploy":"sam deploy --guided",
+    "sam:sync":"sam sync --stack-name slack-gpt-stack --watch",
+    "sam:init-pipline":"sam pipeline init --bootstrap",
     "start" : "node local/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

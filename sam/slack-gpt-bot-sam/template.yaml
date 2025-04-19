@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  slack-gpt-bot-sam
+
+  Sample SAM Template for slack-gpt-bot-sam
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    LoggingConfig:
+      LogFormat: JSON
+Resources:
+  SlackGPTBotFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: slackFunction/
+      Handler: app.lambdaHandler
+      Runtime: nodejs22.x
+      Environment:
+        Variables:
+          OPENAI_API_KEY: '{{resolve:ssm:/slack-gpt/openai_api_key:SecureString}}'
+          SLACK_BOT_TOKEN: '{{resolve:ssm:/slack-gpt/slack_bot_token:SecureString}}' 
+      Architectures:
+      - x86_64
+      Events:
+        SlackEvent:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /slack/events
+            Method: post
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ssm:GetParameter
+              Resource:
+                - arn:aws:ssm:ap-northeast-1:*:parameter/slack-gpt/*
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  SlackGPTApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/slack/events"
+  SlackGPTFunction:
+    Description: Hello World Lambda Function ARN
+    Value: !GetAtt SlackGPTBotFunction.Arn
+  SlackGPTFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value: !GetAtt SlackGPTBotFunctionRole.Arn
