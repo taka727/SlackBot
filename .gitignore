@@ -1,1 +1,28 @@
+# 環境変数・秘密情報
 .env
+.env.*
+
+# 依存パッケージ
+node_modules/
+
+# ログ
+*.log
+npm-debug.log*
+
+# OS生成ファイル
+.DS_Store
+Thumbs.db
+
+# IDE・エディタ
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# AWS SAM
+.aws-sam/
+samconfig.toml
+
+# ビルド成果物
+dist/
+build/
